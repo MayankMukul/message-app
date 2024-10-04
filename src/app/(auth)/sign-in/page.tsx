@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast"
 import { useRouter } from "next/router";
 import { signUpSchema } from "@/schemas/signUpSchema";
 import axios from 'axios';
+import { ApiResponse } from "@/types/ApiResponse";
 
 
 export default function page() {
@@ -48,8 +49,32 @@ export default function page() {
     checkUsernameUnique();
   },[debouncedUsername])
 
-  
+  const onSubmit = async(data: z.infer<typeof signUpSchema>)=>{
+    setIsSubmitting(true);
+    try {
+      const response = await axios.post<ApiResponse>('/api/sign-up', data)
+      toast({
+        title:'Success',
+        description: response.data.message
+      })
+      router.replace(`/verify/${username}`)
+      setIsSubmitting(false);
+    } catch (error) {
+      console.log('error in signup',error);
+      setIsSubmitting(false);
+
+    }
+  }
   return (
-    <div>page</div>
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
+        <div className="text-center">
+          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
+            Join Mystery Message
+          </h1>
+          <p className="mb-4">Sign Up to start your anonymous adventure</p>
+        </div>
+      </div>
+    </div>
   )
 }
