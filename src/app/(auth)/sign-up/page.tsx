@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import Link from 'next/link';
 import { useEffect, useState } from "react";
-import { useDebounceValue } from 'usehooks-ts';
+import { useDebounceCallback } from 'usehooks-ts';
 import { useToast } from "@/hooks/use-toast"
 import { signUpSchema } from "@/schemas/signUpSchema";
 import axios from 'axios';
@@ -29,7 +29,7 @@ export default function page() {
   const [ isCheckingUsername, setIsCheckingUsername] = useState(false);
   const [ isSubmitting, setIsSubmitting] = useState(false);
 
-  const debouncedUsername = useDebounceValue(username, 300)
+  const debounced = useDebounceCallback(setUsername, 300)
   const {toast } = useToast();
   const router = useRouter();
 
@@ -44,11 +44,11 @@ export default function page() {
 
   useEffect(()=>{
     const checkUsernameUnique = async ()=>{
-      if(debouncedUsername){
+      if(username){
         setIsCheckingUsername(true);
         setUsernameMessage('');
         try {
-          const response = await axios.get(`/api/check-username-unique?username=${debouncedUsername}`);
+          const response = await axios.get(`/api/check-username-unique?username=${username}`);
           setUsernameMessage(response.data.message)
         } catch (error) {
           console.log("Error", error);
@@ -58,7 +58,7 @@ export default function page() {
       }
     }
     checkUsernameUnique();
-  },[debouncedUsername])
+  },[username])
 
   const onSubmit = async(data: z.infer<typeof signUpSchema>)=>{
     setIsSubmitting(true);
@@ -97,9 +97,12 @@ export default function page() {
                 <Input placeholder="Username" {...field}
                 onChange={(e)=>{
                   field.onChange(e)
-                  setUsername(e.target.value)
+                  debounced(e.target.value)
                 }} />
               </FormControl>
+              {isCheckingUsername && <>Loading..
+              <p className={`text-sm ${usernameMessage === "Username is unique"? 'text-green-500':'text-red-500'}`}>test {usernameMessage}</p>
+              </>}
               
               <FormMessage />
             </FormItem>
