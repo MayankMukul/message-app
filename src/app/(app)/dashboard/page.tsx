@@ -109,13 +109,41 @@ export default function page() {
 
   const {username} = session?.user ;
   
+  const baseUrl = `${window.location.protocol}//${window.location.host}`
+  const profileUrl = `${baseUrl}/u/${username}`;
+
+  const copyToClipboard = () =>{
+    navigator.clipboard.writeText(profileUrl)
+    toast({
+      title:"URL Copied!",
+      description: "Profile URL has been copied to clip"
+    })
+  }
+
 
     if(!session || !session.user){
       return <div>Please login</div>
   }
 
   return (
-    <div>dashboard
+    <div className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 bg-white rounded w-full max-w-6xl">
+      <h1 className="text-4xl font-bold mb-4">
+          User dashboard
+      </h1>
+
+      <div className="mb-4">
+        <h2 className="text-lg font-semibold mb-2">Copy your unique link</h2>{' '}
+        <div className="flex items center">
+          <input type="text" 
+          value={profileUrl}
+          disabled
+          className="input input-bordered w-full p-2 mr-2"/>
+
+          <button onClick={copyToClipboard}>Copy</button>
+        </div>
+
+      </div>
+
         
     </div>
   )
