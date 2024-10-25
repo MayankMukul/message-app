@@ -1,5 +1,9 @@
 'use client'
 
+import MessageCard from "@/components/MessageCard";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast"; //
 import { Message } from "@/model/User";
 import { acceptMessageSchema } from "@/schemas/acceptMessageSchema";
@@ -141,10 +145,42 @@ export default function page() {
 
           <button onClick={copyToClipboard}>Copy</button>
         </div>
-
       </div>
 
-        
+      <div className="mb-4">
+        <Switch {...register('acceptMessages')}
+        checked={acceptMessages}
+        onCheckedChange={handleSwitchChange}
+        disabled={isSwitchLoading}/>
+        <span className="ml-2">
+          Accept Messages: {acceptMessages? 'On': 'Off'}
+        </span>
+      </div>
+      <Separator/>
+
+      <Button className="mt-4"
+      variant="outline"
+      onClick={(e)=>{
+        e.preventDefault()
+        fetchMessages(true);
+      }}
+      >
+        {isLoading ? (<>Loading</>):(
+          <>Fetch Messages</>
+        )}
+      </Button>
+
+      <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+        {messages.length > 0 ?
+        messages.map((message, index) => (
+          <MessageCard 
+          //key={message._id}
+          message={message}
+          onMessageDelete={handleDeleteMessage}/>
+        )) : (
+          <p> No messages to display.</p>
+        )}
+      </div>  
     </div>
   )
 }
