@@ -1,0 +1,17 @@
+[
+    {
+        "title":"hello",
+        "content": "hello there",
+        "received": "1 Min ago"
+    },
+    {
+        "title":"new Message",
+        "content": "new Message arrived",
+        "received": "2 Min ago"
+    },
+    {
+        "title":"Message 3",
+        "content": "lets go",
+        "received": "3 Min ago"
+    }
+]
